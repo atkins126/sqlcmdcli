@@ -10,15 +10,21 @@ type
 
   TQueryStoreWorkloadOptions = class
   public
-    //class var ServerName: string;
-    //class var DatabaseName: string;
-    //class var UserName: string;
-    //class var Password: string;
+    class var PSP: Boolean;
   end;
 
   TStressDBOptions = class
   public
     class var MeltCPU: Boolean;
+  end;
+
+  TAlterColumnOptions = class
+  public
+    class var SchemaName: string;
+    class var TableName: string;
+    class var ColumnName: string;
+    class var ColumnRename: string;
+    class var DataType: string;
   end;
 
   TGlobalOptions = class
