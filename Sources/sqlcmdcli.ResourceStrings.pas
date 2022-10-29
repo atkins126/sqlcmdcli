@@ -40,6 +40,9 @@ resourcestring
     'removing personally identifiable information from data sets, so that the ' +
     'people whom the data describe remain anonymous (source ' +
     'https://en.wikipedia.org/wiki/Data_anonymization)';
+  RS_CMD_ANONYMIZEDB_SCHEMANAMEINFO = 'The name of the table schema';
+  RS_CMD_ANONYMIZEDB_TABLENAMEINFO = 'The name of the table';
+  RS_CMD_ANONYMIZEDB_COLUMNNAMEINFO = 'The name of the column you want to modify';
 
   RS_CMD_ANONYMIZEDB_DISABLE_FK_START = 'Disable foreign key constraints on %s ...';
   RS_CMD_ANONYMIZEDB_DISABLE_FK_END = 'Foreign key constraints disabled successfully!';
@@ -78,6 +81,9 @@ resourcestring
   RS_ERROR_SQL_SERVER_NATIVE_CLIENT = 'SQL Server Native Client %s is not installed! ' +
                                       'Check here to know how to install SQL ' +
                                       'Server Native Client: https://bit.ly/3wFVJXz';
+  RS_THANKS_FOR_USING = 'Thanks for using sqlcmdcli https://github.com/segovoni/sqlcmdcli';
+  RS_COMMIT_TRANSACTION = 'The transaction has been committed!';
+  RS_ROLLBACK_TRANSACTION = 'The transaction has been rejected!';
 
 implementation
 

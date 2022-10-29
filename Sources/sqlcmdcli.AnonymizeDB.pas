@@ -22,8 +22,8 @@ type
     class procedure DisableTriggers(const AConnection: TADOConnection;
       const ATriggers: TDictionary<string, string>);
   public
-    class procedure Run(const AServerName, ADatabaseName, AUserName, APassword: string;
-      const AVerbose: Boolean);
+    class procedure Run(const AServerName, ADatabaseName, AUserName, APassword,
+      ASchemaName, ATableName, AColumnName: string; const AVerbose: Boolean);
   end;
 
 implementation
@@ -174,7 +174,7 @@ begin
 end;
 
 class procedure TAnonymizeDB.Run(const AServerName, ADatabaseName, AUserName,
-  APassword: string; const AVerbose: Boolean);
+  APassword, ASchemaName, ATableName, AColumnName: string; const AVerbose: Boolean);
 var
   LConnection: TADOConnection;
   LDBSchema: TDBSchema;
@@ -224,7 +224,24 @@ begin
         if (AVerbose) then
           TConsole.Log(Format('Extract schema for %s ...', [ADatabaseName]), Success, False);
 
-        LDBSchemaExtractor.ExtractSchema(stText);
+        if (Trim(ASchemaName) = '') and
+           (Trim(ATableName) = '') and
+           (Trim(AColumnName) = '') then
+        begin
+          LDBSchemaExtractor.ExtractSchema(stText);
+        end
+        else if (Trim(ASchemaName) <> '') and
+                (Trim(ATableName) <> '') and
+                (Trim(AColumnName) <> '') then
+        begin
+          LDBSchemaExtractor.ExtractSchema(ASchemaName, ATableName, AColumnName);
+        end
+        else begin
+          if (AVerbose) then
+            TConsole.Log('Invalid parametes', Error, True);
+          raise Exception.Create('Invalid parametes');
+        end;
+
         LDBSchema := LDBSchemaExtractor.DBSchema;
         //LDBSchemaIndex := LDBSchemaExtractor.DBSchemaIndex;
       finally
@@ -331,7 +348,7 @@ begin
                     'AND (' + LSQLDBTableInfo.ColumnName + '<>'''')';
 
               if (AVerbose) then
-                TConsole.Log(LQry.SQL.Text, Success, True);
+                TConsole.Log(LQry.SQL.Text, Info, True);
 
               LQry.ExecSQL;
             end;
@@ -362,13 +379,16 @@ begin
       TConsole.Log(RS_CMD_ANONYMIZEDB_ENABLE_TR_END, Success, True);
 
       LConnection.CommitTrans;
-      TConsole.Log(Format(RS_CMD_ANONYMIZEDB_END, [ADatabaseName]), Success, False);
+      TConsole.Log(Format(RS_COMMIT_TRANSACTION, [ADatabaseName]), Success, True);
+      TConsole.Log(Format(RS_CMD_ANONYMIZEDB_END, [ADatabaseName]), Success, True);
     except
-      on E: Exception do begin
-        LConnection.RollbackTrans;
-        //Writeln(E.ClassName, ': ', E.Message);
-        TConsole.Log(E.ClassName + ': ' + E.Message, Error, True);
-      end;
+      on E: Exception do
+        begin
+          if (LConnection.InTransaction) then
+            LConnection.RollbackTrans;
+          TConsole.Log(E.ClassName + ': ' + E.Message, Error, True);
+          TConsole.Log(Format(RS_ROLLBACK_TRANSACTION, [ADatabaseName]), Warning, True);
+        end;
     end;
 
   finally
@@ -377,7 +397,6 @@ begin
     FreeAndNil(LConnection);
     FreeAndNil(LTableList);
   end;
-
 end;
 
 end.
