@@ -52,14 +52,14 @@ begin
         'Initial File Name="";' +
         'Server SPN=""';
       LConnection.Connected := True;
-      if (AVerbose) then
-        TConsole.Log(Format(RS_CONNECTION_SUCCESSFULLY, [AServerName]), Success, True);
+      TConsole.Log(AVerbose, Format(RS_CONNECTION_SUCCESSFULLY, [AServerName]),
+        Success, True);
 
       // Create Class
       LDBSchemaExtractor := TSQLDBSchemaExtractor.Create(LConnection);
 
       // Perform extract schema
-      LDBSchemaExtractor.ExtractSchema(stFull);
+      LDBSchemaExtractor.ExtractSchema(stFull, '', '', '');
       LDBSchema := LDBSchemaExtractor.DBSchema;
       //LDBIndex := LDBSchemaExtractor.DBSchemaIndex;
 
